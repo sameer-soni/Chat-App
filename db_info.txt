@@ -1,0 +1,2 @@
+password = tdpBgpewRTuj0OEA
+uri = mongodb+srv://tenyson2005:<password>@cluster0.adpsjwb.mongodb.net/?retryWrites=true&w=majority
