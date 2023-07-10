@@ -3,7 +3,7 @@ const User = require("../Models/userSchema");
 // const cookieParser = require("cookie-parser");
 
 const authVerify = async (req, res, next) => {
-  console.log(req.cookies.token);
+  // console.log(req.cookies.token);
   try {
     const token = req.cookies.token;
     if (!token) {

@@ -2,14 +2,21 @@ import { Box, Button, FormControl, Input, Text } from "@chakra-ui/react";
 import React, { useContext, useEffect, useState } from "react";
 import { MyContext } from "../ContextApi/Context";
 import axios from "axios";
+import io from "socket.io-client";
+
+const EndPoint = "http://192.168.144.107:8000";
+var socket, selectedChatCompare;
 
 function ChattingArea() {
   const [newMessage, setNewMessage] = useState("");
   const [allMessage, setAllMessage] = useState([]);
   const { selectedChat } = useContext(MyContext);
 
+  const [setsocketConnected, setSetsocketConnected] = useState(false);
+
   const loggedUserId = JSON.parse(localStorage.getItem("userInfo"))._id;
   const loggedUserName = JSON.parse(localStorage.getItem("userInfo")).name;
+  const loggedUser = JSON.parse(localStorage.getItem("userInfo"));
 
   const sendMessage = async (e) => {
     if (e.key === "Enter" && newMessage) {
@@ -26,6 +33,7 @@ function ChattingArea() {
           }
         );
         setNewMessage("");
+        socket.emit("new message", data);
         setAllMessage([...allMessage, data]);
 
         console.log(allMessage);
@@ -35,10 +43,17 @@ function ChattingArea() {
     }
   };
 
+  useEffect(() => {
+    socket = io("http://192.168.144.107:8000");
+    socket.emit("setup", loggedUser);
+    socket.on("connection", () => setsocketConnected(true));
+  }, []);
+
   const fetchMessage = async () => {
     if (!selectedChat) {
       return;
     }
+
     try {
       const { data } = await axios.get(
         `http://192.168.144.107:8000/chat/fetch/${selectedChat._id}`,
@@ -48,13 +63,36 @@ function ChattingArea() {
       );
       console.log(data);
       setAllMessage(data.message);
+
+      socket.emit("join chat", selectedChat._id);
     } catch (error) {
       console.log(error);
     }
   };
   useEffect(() => {
     fetchMessage();
+
+    selectedChatCompare = selectedChat;
   }, [selectedChat]);
+  // useEff
+  useEffect(() => {
+    fetchMessage();
+
+    // selectedChatCompare = selectedChat;
+  }, [allMessage]);
+
+  useEffect(() => {
+    socket.on("message recieved", (newMessageRecieved) => {
+      // console.log(newMessageRecieved);
+      if (
+        !selectedChatCompare ||
+        selectedChatCompare._id !== newMessageRecieved._id
+      ) {
+      } else {
+        setAllMessage([...allMessage, newMessageRecieved]);
+      }
+    });
+  });
 
   const inputHandler = (e) => {
     setNewMessage(e.target.value);

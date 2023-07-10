@@ -31,8 +31,43 @@ mongoose
   .then(() => {
     console.log("connected to database");
     //server start
-    app.listen(8000, "192.168.144.107", () => {
+    const server = app.listen(8000, "192.168.144.107", () => {
       console.log("server has started at port: 8000");
+    });
+
+    const io = require("socket.io")(server, {
+      pinTimeout: 60000,
+      cors: {
+        origin: "http://192.168.144.107:5173",
+      },
+    });
+
+    io.on("connection", (socket) => {
+      console.log("connected to socket.io");
+
+      socket.on("setup", (userData) => {
+        socket.join(userData._id);
+        console.log("userDATA.id: ", userData._id);
+        socket.emit("connected");
+      });
+
+      socket.on("join chat", (room) => {
+        socket.join(room);
+        console.log("user joined Room: ", room);
+      });
+
+      socket.on("new message", (newMessageRecieved) => {
+        // console.log(newMessageRecieved);
+        var chat = newMessageRecieved.chat;
+        if (!chat.users) return console.log("chat.users not defined");
+        chat.users.forEach((user) => {
+          if (user == newMessageRecieved.sender._id) {
+            return;
+          }
+          console.log("user@#! ", user);
+          socket.in(user).emit("message recieved", newMessageRecieved);
+        });
+      });
     });
   })
   .catch((e) => {
@@ -48,9 +83,9 @@ app.use("/chat", chatRouter);
 
 //just a test: this below one only!
 app.post("/user", authVerify, (req, res) => {
-  console.log("huehue token : ");
-  console.log(req.cookies.token);
-  console.log(req.user);
+  // console.log("huehue token : ");
+  // console.log(req.cookies.token);
+  // console.log(req.user);
   const user = req.user;
   res.json({ user });
 });
