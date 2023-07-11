@@ -12,6 +12,18 @@ function ChattingArea() {
   const [allMessage, setAllMessage] = useState([]);
   const { selectedChat } = useContext(MyContext);
 
+  const [placeholdername, setPlaceholdername] = useState("");
+  useEffect(() => {
+    const handlePlaceholderName = () => {
+      console.log("selec2@# ", selectedChat);
+      const reciever = selectedChat.users.find((e) => e._id != loggedUserId);
+      console.log("reciever@#@ ", reciever);
+      setPlaceholdername(reciever.name);
+    };
+
+    handlePlaceholderName();
+  }, [selectedChat]);
+
   const [setsocketConnected, setSetsocketConnected] = useState(false);
 
   const loggedUserId = JSON.parse(localStorage.getItem("userInfo"))._id;
@@ -174,7 +186,11 @@ function ChattingArea() {
           //   border={"2px solid red"}
         >
           <Input
-            placeholder={`Message @${loggedUserName}`}
+            placeholder={
+              !selectedChat.isGroupChat
+                ? placeholdername
+                : selectedChat.chatName
+            }
             onChange={(e) => inputHandler(e)}
             value={newMessage}
             bg={"#212121"}
