@@ -13,8 +13,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    // origin: "http://localhost:5173",
-    origin: "http://192.168.144.107:5173",
+    origin: "http://localhost:5173",
+    // origin: "http://192.168.144.107:5173",
     credentials: true,
   })
 );
@@ -31,14 +31,18 @@ mongoose
   .then(() => {
     console.log("connected to database");
     //server start
-    const server = app.listen(8000, "192.168.144.107", () => {
+    // const server = app.listen(8000, "192.168.144.107", () => {
+    //   console.log("server has started at port: 8000");
+    // });
+    const server = app.listen(8000, () => {
       console.log("server has started at port: 8000");
     });
 
     const io = require("socket.io")(server, {
       pinTimeout: 60000,
       cors: {
-        origin: "http://192.168.144.107:5173",
+        // origin: "http://192.168.144.107:5173",
+        origin: "http://localhost:5173",
       },
     });
 

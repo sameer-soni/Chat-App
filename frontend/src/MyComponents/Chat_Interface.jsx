@@ -30,13 +30,14 @@ import Chatting from "./ChattingArea/Chatting";
 import Header from "./ChattingArea/Header";
 import GroupChatCreate from "./groupchatstuff/GroupChatCreate";
 import { MyContext } from "./ContextApi/Context";
+import { Link } from "react-router-dom";
 
 function Chat_Interface() {
   const { fetchChat, setfetchChat } = useContext(MyContext);
   const navigate = useNavigate();
   const [user, setUser] = useState("");
   const test = async () => {
-    const res = await axios.post("http://192.168.144.107:8000/user", null, {
+    const res = await axios.post("http://localhost:8000/user", null, {
       withCredentials: true,
     });
     // console.log(res);
@@ -65,7 +66,7 @@ function Chat_Interface() {
     setLoading(true);
     try {
       const data = await axios.get(
-        `http://192.168.144.107:8000/api/user?search=${search}`,
+        `http://localhost:8000/api/user?search=${search}`,
         {
           withCredentials: true,
         }
@@ -111,7 +112,7 @@ function Chat_Interface() {
     setLoadingChats(true);
     try {
       const { data } = await axios.post(
-        "http://192.168.144.107:8000/api/chat",
+        "http://localhost:8000/api/chat",
         { userId },
         {
           withCredentials: true,
@@ -429,7 +430,14 @@ function Chat_Interface() {
             fontSize: "3vw",
           }}
         >
-          Login/Signup krle phir aana idhr!
+          Do Login then come here
+          <div style={{ color: "white" }}>
+            <Link to={"/"}>
+              <Button _hover={{ backgroundColor: "grey", color: "white" }}>
+                Login
+              </Button>
+            </Link>
+          </div>
         </div>
       )}
     </div>

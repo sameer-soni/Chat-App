@@ -12,7 +12,8 @@ function Signup() {
     e.preventDefault();
     try {
       const signup = await axios.post(
-        "http://192.168.144.107:8000/auth/signup",
+        // "http://192.168.144.107:8000/auth/signup",
+        "http://localhost:8000/auth/signup",
         {
           name,
           email,

@@ -54,7 +54,7 @@ function ChatInfo({ children }) {
     const selectedchatId = selectedChat._id;
     try {
       const { data } = await axios.put(
-        "http://192.168.144.107:8000/api/group-rename",
+        "http://localhost:8000/api/group-rename",
         {
           groupId: selectedchatId,
           groupNewName: groupName,
@@ -89,7 +89,7 @@ function ChatInfo({ children }) {
     setLoading(true);
     try {
       const { data } = await axios.get(
-        `http://192.168.144.107:8000/api/user?search=${e}`,
+        `http://localhost:8000/api/user?search=${e}`,
         {
           withCredentials: true,
         }
@@ -118,7 +118,7 @@ function ChatInfo({ children }) {
     if (loggedUser._id === selectedChat.groupAdmin._id) {
       try {
         const { data } = await axios.put(
-          "http://192.168.144.107:8000/api/group-add",
+          "http://localhost:8000/api/group-add",
           {
             groupId: selectedChat._id,
             userId: u._id,
@@ -146,7 +146,7 @@ function ChatInfo({ children }) {
     if (loggedUser._id === selectedChat.groupAdmin._id) {
       try {
         const { data } = await axios.put(
-          "http://192.168.144.107:8000/api/group-remove",
+          "http://localhost:8000/api/group-remove",
           {
             groupId: selectedChat._id,
             userId: u._id,
@@ -171,7 +171,7 @@ function ChatInfo({ children }) {
     const loggedUser = JSON.parse(localStorage.getItem("userInfo"));
     try {
       const { data } = await axios.put(
-        "http://192.168.144.107:8000/api/group-remove",
+        "http://localhost:8000/api/group-remove",
         {
           groupId: selectedChat._id,
           userId: loggedUser._id,

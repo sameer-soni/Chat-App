@@ -1,10 +1,18 @@
-import { Box, Button, FormControl, Input, Text } from "@chakra-ui/react";
-import React, { useContext, useEffect, useState } from "react";
+import {
+  Box,
+  Button,
+  FormControl,
+  Input,
+  Spinner,
+  Text,
+  border,
+} from "@chakra-ui/react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { MyContext } from "../ContextApi/Context";
 import axios from "axios";
 import io from "socket.io-client";
 
-const EndPoint = "http://192.168.144.107:8000";
+const EndPoint = "http://localhost:8000";
 var socket, selectedChatCompare;
 
 function ChattingArea() {
@@ -12,6 +20,8 @@ function ChattingArea() {
   const [allMessage, setAllMessage] = useState([]);
   const { selectedChat } = useContext(MyContext);
 
+  const [chatLoading, setChatLoading] = useState(false);
+  const messagesBoxRef = useRef(null);
   const [placeholdername, setPlaceholdername] = useState("");
   useEffect(() => {
     const handlePlaceholderName = () => {
@@ -33,9 +43,10 @@ function ChattingArea() {
   const sendMessage = async (e) => {
     if (e.key === "Enter" && newMessage) {
       //   console.log(e);
+      messagesBoxRef.current.scrollTop = messagesBoxRef.current.scrollHeight;
       try {
         const { data } = await axios.post(
-          "http://192.168.144.107:8000/chat/send",
+          "http://localhost:8000/chat/send",
           {
             chatId: selectedChat._id,
             content: newMessage,
@@ -49,6 +60,7 @@ function ChattingArea() {
         setAllMessage([...allMessage, data]);
 
         console.log(allMessage);
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
       } catch (error) {
         console.log(error);
       }
@@ -56,25 +68,30 @@ function ChattingArea() {
   };
 
   useEffect(() => {
-    socket = io("http://192.168.144.107:8000");
+    socket = io("http://localhost:8000");
     socket.emit("setup", loggedUser);
     socket.on("connection", () => setsocketConnected(true));
+
+    messagesBoxRef.current.scrollTop = messagesBoxRef.current.scrollHeight;
   }, []);
 
   const fetchMessage = async () => {
+    setChatLoading(true);
     if (!selectedChat) {
       return;
     }
 
     try {
       const { data } = await axios.get(
-        `http://192.168.144.107:8000/chat/fetch/${selectedChat._id}`,
+        `http://localhost:8000/chat/fetch/${selectedChat._id}`,
         {
           withCredentials: true,
         }
       );
       console.log(data);
       setAllMessage(data.message);
+
+      setChatLoading(false);
 
       socket.emit("join chat", selectedChat._id);
     } catch (error) {
@@ -87,15 +104,14 @@ function ChattingArea() {
     selectedChatCompare = selectedChat;
   }, [selectedChat]);
   // useEff
-  // useEffect(() => {
-  //   fetchMessage();
-
-  //   // selectedChatCompare = selectedChat;
-  // }, [allMessage]);
+  useEffect(() => {
+    messagesBoxRef.current.scrollTop = messagesBoxRef.current.scrollHeight;
+  }, [allMessage]);
 
   useEffect(() => {
     socket.on("message recieved", (newMessageRecieved) => {
       // console.log(newMessageRecieved);
+
       if (
         !selectedChatCompare ||
         selectedChatCompare._id !== newMessageRecieved.chat._id
@@ -112,93 +128,129 @@ function ChattingArea() {
   };
   return (
     <>
-      {/* chat render here */}
-      <Box
-        // m={2}
-        // border={"2px solid pink"}
-        flex={"1"}
-        maxHeight={"85vh"}
-        p={3}
-        display={"flex"}
-        flexDir={"column"}
-        overflow={"auto"}
-        css={{
-          "&::-webkit-scrollbar": {
-            width: "6px",
-            backgroundColor: "#2f3136",
-            borderRadius: "3px",
-          },
-          "&::-webkit-scrollbar-thumb": {
-            backgroundColor: "#202225",
-            borderRadius: "3px",
-          },
-          "&::-webkit-scrollbar-thumb:hover": {
-            backgroundColor: "#17181b",
-          },
-        }}
-      >
-        {allMessage.map((e) => (
-          <span>
-            <Text
-              my={1}
-              color={"black"}
-              bg={e.sender._id == loggedUserId ? "#ff912a" : "#00ffe0"}
-              display={"inline-block"}
-              float={e.sender._id == loggedUserId ? "right" : ""}
-              padding={1}
-              //border radius:
-              borderBottomRightRadius={
-                e.sender._id == loggedUserId ? "0px" : "10px"
-              }
-              borderBottomLeftRadius={
-                e.sender._id == loggedUserId ? "10px" : "0px"
-              }
-              borderTopLeftRadius={"10px"}
-              borderTopRightRadius={"10px"}
-            >
-              {e.content}
-            </Text>
-          </span>
-        ))}
-      </Box>
-
-      {/* Input field code */}
-      <Box
-        // border={"1px solid aqua"}
-        flex={"0.07"}
-        // flex={"1"}
-        // p={1}
-        pt={1}
-        bg={"black"}
-        position={"relative"}
-        bottom={"0"}
-        height={"10px"}
-        justifyContent={"center"}
-        alignItems={"center"}
-      >
-        <FormControl
+      {chatLoading ? (
+        <Box
+          // style={{ border: "2px solid blue", color: "aqua" }}
+          flex={"1"}
+          maxHeight={"85vh"}
           display={"flex"}
-          flexDirection={"row"}
-          px={2}
-          onKeyDown={sendMessage}
-          isRequired
-          mt={"0.5"}
-          //   border={"2px solid red"}
+          justifyContent={"center"}
+          alignItems={"center"}
         >
-          <Input
-            placeholder={
-              !selectedChat.isGroupChat
-                ? placeholdername
-                : selectedChat.chatName
-            }
-            onChange={(e) => inputHandler(e)}
-            value={newMessage}
-            bg={"#212121"}
-            height={10}
+          <Spinner
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="red.100"
+            color="red.500"
+            size="xl"
+            height={"30vh"}
+            width={"30vh"}
           />
-          {/* <Button ml={1}>Send</Button> */}
-        </FormControl>
-      </Box>
+        </Box>
+      ) : (
+        <>
+          <Box
+            // m={2}
+            // border={"2px solid pink"}
+            flex={"1"}
+            maxHeight={"85vh"}
+            p={3}
+            display={"flex"}
+            flexDir={"column"}
+            overflow={"auto"}
+            ref={messagesBoxRef}
+            css={{
+              "&::-webkit-scrollbar": {
+                width: "6px",
+                backgroundColor: "#2f3136",
+                borderRadius: "3px",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                backgroundColor: "#202225",
+                borderRadius: "3px",
+              },
+              "&::-webkit-scrollbar-thumb:hover": {
+                backgroundColor: "#17181b",
+              },
+            }}
+          >
+            {allMessage.map((e) => (
+              <span>
+                {console.log('its e@#@" ', e)}
+                {/* {selectedChat.isGroupChat ? <span>{e.sender.name}</span> : ""} */}
+                {selectedChat.isGroupChat ? (
+                  e.sender._id !== loggedUserId ? (
+                    <span
+                      style={{
+                        color: "#ff7b31",
+                        fontSize: "12px",
+                        marginRight: "8px",
+                      }}
+                    >
+                      {e.sender.name} :
+                    </span>
+                  ) : null
+                ) : null}
+                <Text
+                  my={1}
+                  color={"black"}
+                  bg={e.sender._id == loggedUserId ? "#c02921" : "#d1d1d1"}
+                  display={"inline-block"}
+                  float={e.sender._id == loggedUserId ? "right" : ""}
+                  padding={"10px"}
+                  //border radius:
+                  borderBottomRightRadius={
+                    e.sender._id == loggedUserId ? "0px" : "10px"
+                  }
+                  borderBottomLeftRadius={
+                    e.sender._id == loggedUserId ? "10px" : "0px"
+                  }
+                  borderTopLeftRadius={"10px"}
+                  borderTopRightRadius={"10px"}
+                >
+                  {e.content}
+                </Text>
+              </span>
+            ))}
+          </Box>
+
+          <Box
+            // border={"1px solid aqua"}
+            flex={"0.07"}
+            // flex={"1"}
+            // p={1}
+            pt={1}
+            bg={"black"}
+            position={"relative"}
+            bottom={"0"}
+            height={"10px"}
+            justifyContent={"center"}
+            alignItems={"center"}
+          >
+            <FormControl
+              display={"flex"}
+              flexDirection={"row"}
+              px={2}
+              onKeyDown={sendMessage}
+              isRequired
+              mt={"0.5"}
+              //   border={"2px solid red"}
+            >
+              <Input
+                placeholder={
+                  !selectedChat.isGroupChat
+                    ? "Message @" + placeholdername
+                    : "Chat in: " + selectedChat.chatName.toUpperCase()
+                }
+                onChange={(e) => inputHandler(e)}
+                value={newMessage}
+                bg={"#212121"}
+                height={10}
+              />
+            </FormControl>
+          </Box>
+        </>
+      )}
     </>
   );
 }

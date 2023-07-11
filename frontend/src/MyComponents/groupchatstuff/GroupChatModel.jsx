@@ -54,7 +54,7 @@ function GroupChatModel({ children }) {
     setLoading(true);
     try {
       const { data } = await axios.get(
-        `http://192.168.144.107:8000/api/user?search=${e}`,
+        `http://localhost:8000/api/user?search=${e}`,
         {
           withCredentials: true,
         }
@@ -88,7 +88,7 @@ function GroupChatModel({ children }) {
     }
     try {
       const { data } = await axios.post(
-        `http://192.168.144.107:8000/api/group-create`,
+        `http://localhost:8000/api/group-create`,
         {
           groupName: name,
           members: JSON.stringify(addedUser.map((e) => e._id)),

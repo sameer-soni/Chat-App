@@ -24,7 +24,7 @@ function ChatList({ clickfn }) {
 
   const fetchChats = async () => {
     try {
-      const { data } = await axios.get("http://192.168.144.107:8000/api/chat", {
+      const { data } = await axios.get("http://localhost:8000/api/chat", {
         withCredentials: true,
       });
       //   console.log("fetch chats data: ", data);

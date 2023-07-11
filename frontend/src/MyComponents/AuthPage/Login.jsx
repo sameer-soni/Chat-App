@@ -12,8 +12,8 @@ function Login() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        // "http://localhost:8000/auth/login",
-        "http://192.168.144.107:8000/auth/login",
+        "http://localhost:8000/auth/login",
+        // "http://192.168.144.107:8000/auth/login",
 
         {
           email,
