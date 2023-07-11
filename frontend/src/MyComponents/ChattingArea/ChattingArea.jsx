@@ -75,18 +75,18 @@ function ChattingArea() {
     selectedChatCompare = selectedChat;
   }, [selectedChat]);
   // useEff
-  useEffect(() => {
-    fetchMessage();
+  // useEffect(() => {
+  //   fetchMessage();
 
-    // selectedChatCompare = selectedChat;
-  }, [allMessage]);
+  //   // selectedChatCompare = selectedChat;
+  // }, [allMessage]);
 
   useEffect(() => {
     socket.on("message recieved", (newMessageRecieved) => {
       // console.log(newMessageRecieved);
       if (
         !selectedChatCompare ||
-        selectedChatCompare._id !== newMessageRecieved._id
+        selectedChatCompare._id !== newMessageRecieved.chat._id
       ) {
       } else {
         setAllMessage([...allMessage, newMessageRecieved]);
