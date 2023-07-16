@@ -118,7 +118,13 @@ function ChatList({ clickfn }) {
             <Text fontWeight="bold" letterSpacing="1px">
               {e.isGroupChat ? e.chatName.toUpperCase() : getSender(e)}
             </Text>
-            <Text fontSize="sm">latest message</Text>
+            {/* <Text fontSize="sm">{e.latestMessage.content}</Text> */}
+            <Text fontSize="sm">
+              <span style={{ fontWeight: "bold", color: "#ffca51" }}>
+                {e.users.find((u) => u._id === e.latestMessage.sender).name}
+              </span>
+              : {e.latestMessage.content}
+            </Text>
           </Box>
         </Flex>
       ))}

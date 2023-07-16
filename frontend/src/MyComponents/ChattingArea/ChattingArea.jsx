@@ -100,7 +100,7 @@ function ChattingArea() {
   };
   useEffect(() => {
     fetchMessage();
-
+    console.log("selctedchat@# ", selectedChat);
     selectedChatCompare = selectedChat;
   }, [selectedChat]);
   // useEff
@@ -176,7 +176,7 @@ function ChattingArea() {
           >
             {allMessage.map((e) => (
               <span>
-                {console.log('its e@#@" ', e)}
+                {/* {console.log('its e@#@" ', e)} */}
                 {/* {selectedChat.isGroupChat ? <span>{e.sender.name}</span> : ""} */}
                 {selectedChat.isGroupChat ? (
                   e.sender._id !== loggedUserId ? (
