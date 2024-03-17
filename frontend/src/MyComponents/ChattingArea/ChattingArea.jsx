@@ -12,7 +12,7 @@ import { MyContext } from "../ContextApi/Context";
 import axios from "axios";
 import io from "socket.io-client";
 
-const EndPoint = "http://localhost:8000";
+const EndPoint = `${import.meta.env.VITE_BACKEND_URL}`;
 var socket, selectedChatCompare;
 
 function ChattingArea() {
@@ -46,7 +46,7 @@ function ChattingArea() {
       messagesBoxRef.current.scrollTop = messagesBoxRef.current.scrollHeight;
       try {
         const { data } = await axios.post(
-          "http://localhost:8000/chat/send",
+          import.meta.env.VITE_BACKEND_URL + "/chat/send",
           {
             chatId: selectedChat._id,
             content: newMessage,
@@ -68,7 +68,7 @@ function ChattingArea() {
   };
 
   useEffect(() => {
-    socket = io("http://localhost:8000");
+    socket = io(`${import.meta.env.VITE_BACKEND_URL}`);
     socket.emit("setup", loggedUser);
     socket.on("connection", () => setsocketConnected(true));
 
@@ -83,7 +83,7 @@ function ChattingArea() {
 
     try {
       const { data } = await axios.get(
-        `http://localhost:8000/chat/fetch/${selectedChat._id}`,
+        `${import.meta.env.VITE_BACKEND_URL}/chat/fetch/${selectedChat._id}`,
         {
           withCredentials: true,
         }
@@ -234,7 +234,7 @@ function ChattingArea() {
               onKeyDown={sendMessage}
               isRequired
               mt={"0.5"}
-              //   border={"2px solid red"}
+            //   border={"2px solid red"}
             >
               <Input
                 placeholder={

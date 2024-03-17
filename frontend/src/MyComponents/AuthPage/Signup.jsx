@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Signup.css";
 import axios from "axios";
 
@@ -7,19 +7,23 @@ function Signup() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const submit = async (e) => {
     e.preventDefault();
     try {
       const signup = await axios.post(
         // "http://192.168.144.107:8000/auth/signup",
-        "http://localhost:8000/auth/signup",
+        // "http://localhost:8000/auth/signup",
+        import.meta.env.VITE_BACKEND_URL + "/auth/signup",
         {
           name,
           email,
           password,
         }
       );
+
+      navigate('/')
     } catch (error) {
       //   console.log(error);
       console.log(error.response.data.error);

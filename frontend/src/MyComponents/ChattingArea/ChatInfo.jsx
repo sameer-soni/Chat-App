@@ -54,7 +54,8 @@ function ChatInfo({ children }) {
     const selectedchatId = selectedChat._id;
     try {
       const { data } = await axios.put(
-        "http://localhost:8000/api/group-rename",
+        // "http://localhost:8000/api/group-rename",
+        import.meta.env.VITE_BACKEND_URL + "/api/group-name",
         {
           groupId: selectedchatId,
           groupNewName: groupName,
@@ -89,7 +90,7 @@ function ChatInfo({ children }) {
     setLoading(true);
     try {
       const { data } = await axios.get(
-        `http://localhost:8000/api/user?search=${e}`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/user?search=${e}`,
         {
           withCredentials: true,
         }
@@ -118,7 +119,7 @@ function ChatInfo({ children }) {
     if (loggedUser._id === selectedChat.groupAdmin._id) {
       try {
         const { data } = await axios.put(
-          "http://localhost:8000/api/group-add",
+          import.meta.env.VITE_BACKEND_URL + "/api/group-add",
           {
             groupId: selectedChat._id,
             userId: u._id,
@@ -146,7 +147,7 @@ function ChatInfo({ children }) {
     if (loggedUser._id === selectedChat.groupAdmin._id) {
       try {
         const { data } = await axios.put(
-          "http://localhost:8000/api/group-remove",
+          import.meta.env.VITE_BACKEND_URL + "/api/group-remove",
           {
             groupId: selectedChat._id,
             userId: u._id,
@@ -171,7 +172,7 @@ function ChatInfo({ children }) {
     const loggedUser = JSON.parse(localStorage.getItem("userInfo"));
     try {
       const { data } = await axios.put(
-        "http://localhost:8000/api/group-remove",
+        import.meta.env.VITE_BACKEND_URL + "/api/group-remove",
         {
           groupId: selectedChat._id,
           userId: loggedUser._id,

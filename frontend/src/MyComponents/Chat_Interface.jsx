@@ -37,7 +37,7 @@ function Chat_Interface() {
   const navigate = useNavigate();
   const [user, setUser] = useState("");
   const test = async () => {
-    const res = await axios.post("http://localhost:8000/user", null, {
+    const res = await axios.post(import.meta.env.VITE_BACKEND_URL + "/user", null, {
       withCredentials: true,
     });
     // console.log(res);
@@ -66,7 +66,7 @@ function Chat_Interface() {
     setLoading(true);
     try {
       const data = await axios.get(
-        `http://localhost:8000/api/user?search=${search}`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/user?search=${search}`,
         {
           withCredentials: true,
         }
@@ -112,7 +112,7 @@ function Chat_Interface() {
     setLoadingChats(true);
     try {
       const { data } = await axios.post(
-        "http://localhost:8000/api/chat",
+        import.meta.env.VITE_BACKEND_URL + "/api/chat",
         { userId },
         {
           withCredentials: true,
@@ -316,7 +316,7 @@ function Chat_Interface() {
               flex={"1"}
               borderRadius={"6px"}
               bg={"#121212"}
-              // padding={"10px"}
+            // padding={"10px"}
             >
               <Flex
                 direction={"column"}

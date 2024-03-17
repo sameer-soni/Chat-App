@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -13,7 +14,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_URL,
     // origin: "http://[ip]",
     credentials: true,
   })
@@ -21,8 +22,7 @@ app.use(
 app.use(cookieParser());
 
 //connect to mongoDB
-const DB =
-  "mongodb+srv://tenyson2005:tdpBgpewRTuj0OEA@cluster0.adpsjwb.mongodb.net/?retryWrites=true&w=majority";
+const DB =process.env.DB_URI;
 mongoose
   .connect(DB, {
     useNewUrlParser: true,
@@ -42,7 +42,7 @@ mongoose
       pinTimeout: 60000,
       cors: {
         // origin: "http://{ip}",
-        origin: "http://localhost:5173",
+        origin: process.env.FRONTEND_URL,
       },
     });
 

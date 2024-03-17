@@ -12,9 +12,8 @@ function Login() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:8000/auth/login",
-        // "http://192.168.144.107:8000/auth/login",
-
+        // "http://localhost:8000/auth/login",
+        import.meta.env.VITE_BACKEND_URL + "/auth/login",
         {
           email,
           password,
@@ -32,6 +31,7 @@ function Login() {
       navigate("/chat");
     } catch (error) {
       console.log(error);
+      window.alert(error.response.data.error)
       // console.log(error.response.data.error);
       // document.getElementById("alert").style.visibility = "visible";
       // document.getElementById("alert").innerText = error.response.data.error;

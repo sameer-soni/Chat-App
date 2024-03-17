@@ -24,7 +24,7 @@ function ChatList({ clickfn }) {
 
   const fetchChats = async () => {
     try {
-      const { data } = await axios.get("http://localhost:8000/api/chat", {
+      const { data } = await axios.get(import.meta.env.VITE_BACKEND_URL + "/api/chat", {
         withCredentials: true,
       });
       //   console.log("fetch chats data: ", data);
@@ -116,14 +116,14 @@ function ChatList({ clickfn }) {
           <Avatar src="" />
           <Box ml="3" color={"white"}>
             <Text fontWeight="bold" letterSpacing="1px">
-              {e.isGroupChat ? e.chatName.toUpperCase() : getSender(e)}
+              {e.isGroupChat ? e.chatName?.toUpperCase() : getSender(e)}
             </Text>
             {/* <Text fontSize="sm">{e.latestMessage.content}</Text> */}
             <Text fontSize="sm">
               <span style={{ fontWeight: "bold", color: "#ffca51" }}>
-                {e.users.find((u) => u._id === e.latestMessage.sender).name}
+                {e.users.find((u) => u._id === e.latestMessage?.sender)?.name}
               </span>
-              : {e.latestMessage.content}
+              : {e.latestMessage?.content}
             </Text>
           </Box>
         </Flex>
